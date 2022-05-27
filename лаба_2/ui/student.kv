@@ -1,0 +1,293 @@
+#:import os os
+<UpdateRowsDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: 'vertical'
+
+        TextInput:
+            id: tin
+            text: ''
+            multiline: False
+        Button:
+            size_hint_y: .2
+            text: 'OK'
+            on_release:
+                root.change(tin.text)
+
+
+<ResultDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: 'vertical'
+
+        Label:
+            text: 'Было удалено {} запись(и/ей)'.format(root.result) if root.result != 0 else 'Записи не найдены'
+        Button:
+            size_hint_y: .2
+            text: 'OK'
+            on_release: root.close()
+
+
+<DialogLoader>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: 'vertical'
+
+        FileChooserIconView:
+            id: filechooser
+            path: str(os.getcwd())
+
+        BoxLayout:
+            size_hint_y: .1
+            Button:
+                text: 'Cancel'
+                on_release: root.cancel()
+
+            Button:
+                text: 'Load'
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+
+<DialogSaver>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: 'vertical'
+
+        FileChooserIconView:
+            id: filechooser
+            path: str(os.getcwd())
+            on_selection: text_input.text = self.selection and self.selection[0] or ''
+
+        TextInput:
+            id: text_input
+            size_hint_y: None
+            height: 30
+            multiline: False
+
+        BoxLayout:
+            size_hint_y: .1
+            Button:
+                text: 'Cancel'
+                on_release: root.cancel()
+
+            Button:
+                text: 'Save'
+                on_release: root.save(filechooser.path, text_input.text)
+
+
+<AddNoteDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: 'vertical'
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: .5
+            BoxLayout:
+                Label:
+                    size_hint_x: .5
+                    text: 'Имя'
+                TextInput:
+                    id: name
+            BoxLayout:
+                Label:
+                    size_hint_x: .5
+                    text: 'Курс'
+                TextInput:
+                    id: course
+            BoxLayout:
+                Label:
+                    size_hint_x: .5
+                    text: 'Группа'
+                TextInput:
+                    id: group
+            BoxLayout:
+                Label:
+                    size_hint_x: .5
+                    text: 'Общее число работ'
+                TextInput:
+                    id: total
+            BoxLayout:
+                Label:
+                    size_hint_x: .5
+                    text: 'Количество выполненных работ'
+                TextInput:
+                    id: done
+            BoxLayout:
+                Label:
+                    size_hint_x: .5
+                    text: 'Язык программирования'
+                TextInput:
+                    id: language
+
+        BoxLayout:
+            size_hint_y: .1
+            Button:
+                text: 'Cancel'
+                on_release: root.cancel()
+
+            Button:
+                text: 'Add'
+                on_release: root.add(name.text, course.text, group.text, total.text, done.text, language.text)
+
+
+<DeleteNoteDialog>:
+    content: content
+    spinner: tag
+    input: choice
+    GridLayout:
+        id: content
+        rows: 1
+        pos: (root.x, root.top-root.height/3)
+        size_hint_y: .1
+        Spinner:
+            id: tag
+            text: 'Имя'
+            values: ('Имя', 'Курс', 'Группа', 'Общее число работ', 'Количество выполненных работ', 'Язык программирования', 'Количество не выполненных работ')
+            on_text: root.modify_input()
+        TextInput:
+            id: choice
+            multiline: False
+
+    GridLayout:
+        rows: 1
+        pos: (root.x, root.top-root.height)
+        size_hint_y: .1
+        Button:
+            text: 'Cancel'
+            on_release: root.cancel()
+
+        Button:
+            text: 'Delete'
+            on_release: root.delete(root.spinner.text, root.input.text)
+
+
+<SearchDialog>:
+    content: content
+    spinner: tag
+    input: choice
+    GridLayout:
+        id: content
+        rows: 1
+        pos: (root.x, root.top-root.height/3)
+        size_hint_y: .1
+        Spinner:
+            id: tag
+            text: 'Имя'
+            values: ('Имя', 'Курс', 'Группа', 'Общее число работ', 'Количество выполненных работ', 'Язык программирования', 'Количество не выполненных работ')
+            on_text: root.modify_input()
+        TextInput:
+            id: choice
+            multiline: False
+
+    GridLayout:
+        rows: 1
+        pos: (root.x, root.top-root.height)
+        size_hint_y: .1
+        Button:
+            text: 'Cancel'
+            on_release: root.cancel()
+
+        Button:
+            text: 'Search'
+            on_release: root.search(root.spinner.text, root.input.text)
+
+
+<TableOutlineLabel>:
+    # Text properties
+    text_size: self.size
+    halign: 'center'
+    valign: 'middle'
+    font_size: 15
+    color: (0, 0, 0, 1)
+    # Label properties
+    size_hint_y: None
+    canvas.before:
+        Color:
+            rgba: (0, 0, 0, 1)
+        Line:
+            width: 1
+            close: True
+            rectangle: [self.x, self.y, self.width, self.height]
+
+
+<TableOutline>:
+    cols: 6
+    TableOutlineLabel:
+        text: 'ФИО студента'
+    TableOutlineLabel:
+        text: 'Курс'
+    TableOutlineLabel:
+        text: 'Группа'
+    TableOutlineLabel:
+        text: 'Общее число работ'
+    TableOutlineLabel:
+        text: 'Количество выполненных работ'
+    TableOutlineLabel:
+        text: 'Язык программирования'
+
+
+<DispScreen>:
+    max_rows: self.max_rows
+    fields: self.fields
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    ActionBar:
+        pos_hint: {'x': 0, 'top': self.height/root.height}
+        ActionView:
+            ActionPrevious:
+                with_previous: False
+                app_icon: ''
+            ActionButton:
+                text: '{}/{} записей'.format(root.max_rows, root.fields) if root.fields != None else '5/0 записей'
+                on_release:
+                    root.parent.show_update()
+                    text: '{}/{} записей'.format(root.max_rows, root.fields) if root.fields != None else '{}/0 записей'.format(root.max_rows)
+            ActionButton:
+                text: '<<'
+                on_release:
+                    root.parent.transition.direction = 'right'
+                    root.parent.first()
+            ActionButton:
+                text: '<'
+                on_release:
+                    root.parent.transition.direction = 'right'
+                    root.parent.prev()
+            ActionButton:
+                text: '>'
+                on_release:
+                    root.parent.transition.direction = 'left'
+                    root.parent.next()
+            ActionButton:
+                text: '>>'
+                on_release:
+                    root.parent.transition.direction = 'left'
+                    root.parent.last()
+            ActionButton:
+                text: 'Exit'
+                on_release: app.stop()
+            ActionButton:
+                text: 'Open'
+                on_release: root.show_load()
+            ActionButton:
+                text: 'Save As'
+                on_release: root.show_save()
+            ActionButton:
+                text: 'Search'
+                on_release: root.show_search()
+            ActionButton:
+                text: 'Add'
+                on_release: root.show_add()
+            ActionButton:
+                text: 'Delete'
+                on_release: root.show_delete()
